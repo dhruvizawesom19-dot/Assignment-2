@@ -7,6 +7,10 @@
 
 
 void oct_to_bin(const char *oct, char *out) {
+    if (strcmp(oct, "0") == 0) {
+        strcpy(out, "0");
+        return;
+    }
     out[0] = '\0';
     for (size_t i = 0; i < strlen(oct); i++) {
         int digit = oct[i] - '0';

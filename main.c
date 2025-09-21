@@ -8,6 +8,9 @@ int main(void) {
     FILE *fout = fopen("output.txt", "w");
 
     char line[512];
+
+    int total = 0, passed = 0;
+
     while (fgets(line, sizeof(line), fin)) {
         if (line[0] == '#' || line[0] == '\n') continue;
 
@@ -38,14 +41,18 @@ int main(void) {
             continue;
         }
 
+        total++;
         if (strcmp(expected, got) == 0) {
             fprintf(fout, "%s(%s) -> Expected:%s Got:%s [PASS]\n",
                     func, in1, expected, got);
+            passed++;
         } else {
             fprintf(fout, "%s(%s) -> Expected:%s Got:%s [FAIL]\n",
                     func, in1, expected, got);
         }
     }
+
+    fprintf(fout, "Summary: %d/%d tests passed\n", passed, total);
 
     fclose(fin);
     fclose(fout);
