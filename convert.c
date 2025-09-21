@@ -24,7 +24,51 @@ void oct_to_bin(const char *oct, char *out){
 }
 
 void oct_to_hex(const char *oct, char *out){
+    if(!oct || !out) return;
+    size_t octlen = strlen(oct);
+    if(octlen == 0) {
+        out[0] = '\0';
+        return;
+    }
+    size_t bin_capacity = 3 * octlen + 1;
+    char *bin = malloc(bin_capacity);
+    if (!bin) { out[0] = '\0'; return; }
+    oct_to_bin(oct, bin);
+    if (bin[0] == '\0') { free(bin); out[0] = '\0'; return; }
 
+    size_t binlen = strlen(bin);
+
+    
+    int pad = (4 - (binlen % 4)) % 4;
+    size_t padded_len = binlen + pad;
+    char *padded = malloc(padded_len + 1);
+    if (!padded) { free(bin); out[0] = '\0'; return; }
+    for (int i = 0; i < pad; i++) padded[i] = '0';
+    memcpy(padded + pad, bin, binlen);
+    padded[padded_len] = '\0';
+
+    
+    size_t hex_pos = 0;
+    for (size_t i = 0; i < padded_len; i += 4) {
+        int value = 0;
+        for (int b = 0; b < 4; b++) {
+            value = (value << 1) + (padded[i + b] == '1');
+        }
+        out[hex_pos++] = (value < 10) ? ('0' + value) : ('A' + (value - 10));
+    }
+    out[hex_pos] = '\0';
+
+    
+    size_t first_nonzero = 0;
+    while (first_nonzero < hex_pos && out[first_nonzero] == '0') first_nonzero++;
+    if (first_nonzero == hex_pos) {
+        out[0] = '0'; out[1] = '\0';
+    } else if (first_nonzero > 0) {
+        memmove(out, out + first_nonzero, hex_pos - first_nonzero + 1);
+    }
+
+    free(bin);
+    free(padded);
 }
 
 void hex_to_bin(const char *hex, char *out){
