@@ -7,14 +7,17 @@
 
 
 void oct_to_bin(const char *oct, char *out) {
+    // Handle the special case for zero
     if (strcmp(oct, "0") == 0) {
         strcpy(out, "0");
         return;
     }
     out[0] = '\0';
     for (size_t i = 0; i < strlen(oct); i++) {
+        // converts the character to its integer value
         int digit = oct[i] - '0';
         char buf[4];
+        // builds a 3 bit binary string for each octal digit
         snprintf(buf, sizeof(buf), "%03d",
                  ((digit & 4) ? 1 : 0) * 100 +
                  ((digit & 2) ? 1 : 0) * 10 +
@@ -50,7 +53,9 @@ void oct_to_hex(const char *oct, char *out) {
 
 
     int idx = 0;
-    while (out[idx] == '0' && out[idx + 1] != '\0') idx++;
+    while (out[idx] == '0' && out[idx + 1] != '\0'){
+        idx++;
+    }
     if (idx > 0) memmove(out, out + idx, strlen(out) - idx + 1);
 }
 
@@ -64,6 +69,7 @@ void hex_to_bin(const char *hex, char *out) {
         else digit = 10 + (c - 'A');
 
         char buf[5];
+        //builds a 4 bit binary string for each hex digit
         snprintf(buf, sizeof(buf), "%04d",
                  ((digit & 8) ? 1 : 0) * 1000 +
                  ((digit & 4) ? 1 : 0) * 100 +
@@ -82,7 +88,7 @@ void to_sign_magnitude(int32_t n, char *out) {
     } else {
         bits = (uint32_t)n;
     }
-
+    // loop to convert bits to binary string
     for (int i = 31; i >= 0; i--) {
         out[31 - i] = (bits & (1u << i)) ? '1' : '0';
     }
