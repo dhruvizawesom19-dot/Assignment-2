@@ -115,11 +115,32 @@ void hex_to_bin(const char *hex, char *out){
 }
 
 void to_sign_magnitude(int32_t n, char *out) {
-
+    if(!out){
+        return;
+    }
+    uint32_t bits;
+    if(n >= 0){
+        bits = (uint32_t)n;
+    } else {
+        int64_t mag = -(int64_t)n;
+        uint32_t magnitude = (uint32_t)(mag & 0x7FFFFFFF);
+        bits = magnitude | 0x80000000;
+    }
+    for(int i = 31; i >= 0; i--){
+        out[31 - i] = (bits >> i & 1) ? '1' : '0';
+    }
+    out[32] = '\0';
 }
 
 void to_ones_complement(int32_t n, char *out) {
-
+    if(!out){
+        return;
+    }
+    uint32_t bits = (uint32_t)n;
+    for(int i = 31; i >= 0; i--){
+        out[31 - i] = (bits >> i & 1) ? '1' : '0';
+    }
+    out[32] = '\0';
 }
 
 void to_twos_complement(int32_t n, char *out) {
